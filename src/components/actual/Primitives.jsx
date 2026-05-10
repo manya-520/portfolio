@@ -9,7 +9,7 @@ import {
 export function StatusChip({ children, tone = "pending" }) {
   const styles =
     tone === "running"
-      ? "bg-[#2076BB]/10 border-[#2076BB]/25 text-[#2076BB]"
+      ? "bg-[#0043CE]/10 border-[#0043CE]/25 text-[#0043CE]"
       : tone === "success"
       ? "bg-[#ecfdf5] border-[#d1fae5] text-[#047857]"
       : tone === "warning"
@@ -123,7 +123,7 @@ export function RepoCardStats({ owner, repo, stats, action }) {
 export function ActionLink({ children, onClick, href }) {
   /** Figma / Carbon-style link blue */
   const className =
-    "inline-flex items-center gap-1 whitespace-nowrap text-typ-body font-semibold text-[#0f62fe] underline-offset-2 hover:underline";
+    "inline-flex items-center gap-1 whitespace-nowrap text-typ-body font-semibold text-actual-accent underline-offset-2 hover:underline";
   if (href) {
     return (
       <Link href={href} className={className}>

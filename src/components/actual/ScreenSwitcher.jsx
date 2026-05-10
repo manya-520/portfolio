@@ -4,13 +4,12 @@ import { useMemo, useState } from "react";
 import { useHydratedActualPath } from "./useHydratedActualPath";
 
 const SCREENS = [
-  { href: "/work/actual", label: "1. First time ever" },
-  { href: "/work/actual/onboarding-2", label: "2. Processing" },
-  { href: "/work/actual/adr", label: "3. Decisions (repos)" },
-  { href: "/work/actual/adr/on-prem", label: "4. ADR — In review" },
-  { href: "/work/actual/adr/web-platform", label: "5. ADR — Synced" },
-  { href: "/work/actual/adr/agents-runtime", label: "6. ADR — Changes" },
-  { href: "/work/actual/adr/design-system", label: "7. ADR — Draft" },
+  { href: "/work/actual/onboarding-2", label: "1. Processing" },
+  { href: "/work/actual/adr", label: "2. Decisions (repos)" },
+  { href: "/work/actual/adr/on-prem", label: "3. ADR — In review" },
+  { href: "/work/actual/adr/web-platform", label: "4. ADR — Synced" },
+  { href: "/work/actual/adr/agents-runtime", label: "5. ADR — Changes" },
+  { href: "/work/actual/adr/design-system", label: "6. ADR — Draft" },
 ];
 
 function resolveScreenHref(path) {

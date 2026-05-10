@@ -1,4 +1,20 @@
+import dynamic from "next/dynamic";
+
 import ActualLayout from "@/components/actual/ActualLayout";
+
+const ContributionSection = dynamic(
+  () => import("@/components/actual/ContributionSection"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="min-h-[320px] rounded-lg border border-actual-divider bg-actual-subtle/50"
+        aria-hidden
+      />
+    ),
+  }
+);
+import FeatureReportCards from "@/components/actual/FeatureReportCards";
 import {
   ActionLink,
   BrowseCategoryChip,
@@ -108,13 +124,12 @@ export default function ActualOnboarding2() {
         <div className="flex min-w-0 flex-1 flex-col gap-6 xl:max-w-[1128px]">
           <WelcomeCard
             stages={STAGES}
-            stage="Stage 2 of 3"
-            elapsed="4m 12s"
             syncStatus="Repository Sync Complete"
+            animated
           />
 
-          <section>
-            <div className="flex items-center justify-between py-1">
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
               <h3 className="text-typ-body font-semibold text-actual-ink">
                 Active Repositories
               </h3>
@@ -150,9 +165,12 @@ export default function ActualOnboarding2() {
               ))}
             </div>
           </section>
+
+          <ContributionSection />
+          <FeatureReportCards />
         </div>
 
-        <RightRail done={1} />
+        <RightRail />
       </div>
     </ActualLayout>
   );

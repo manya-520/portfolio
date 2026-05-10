@@ -16,10 +16,9 @@ export default function ActualLayout({
       </Head>
       <div className="font-inter antialiased min-h-screen bg-white text-actual-ink">
         <Sidebar />
-        {/* overflow-x-hidden on a flex ancestor breaks sticky/fixed chrome in some browsers — clip scroll on main only */}
         <div className="flex min-h-screen min-w-0 flex-col pl-[220px]">
           <Header breadcrumb={breadcrumb} rightSlot={rightSlot} />
-          <main className="min-h-0 min-w-0 flex-1 overflow-x-hidden bg-white pt-[68px]">
+          <main className="min-h-0 min-w-0 flex-1 bg-white pb-24 pt-[68px]">
             {children}
           </main>
         </div>

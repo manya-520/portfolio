@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* shadcn-style chart token (Actual accent #0043CE → HSL) */
+:root {
+  --chart-1: 221 100% 40%;
+  --chart-2: 215 20% 42%;
+}

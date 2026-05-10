@@ -19,7 +19,7 @@ import { useHydratedActualPath } from "./useHydratedActualPath";
 const ACTUAL_LOGO_COLOR_SRC = encodeURI("/color (4).png");
 
 const TOP_ITEMS = [
-  { label: "Home", href: "/work/actual", Icon: HouseIcon },
+  { label: "Home", href: "/work/actual/onboarding-2", Icon: HouseIcon },
   { label: "Insights", href: "/work/actual/insights", Icon: ChartColumnIcon },
 ];
 
@@ -142,7 +142,9 @@ function CollapsibleGroupHeader({ label, expanded, onToggle, panelId }) {
 
 function routeMatchesPath(path, href) {
   if (!path) return false;
-  if (href === "/work/actual") return path === "/work/actual";
+  if (href === "/work/actual/onboarding-2") {
+    return path === href || path === "/work/actual";
+  }
   return path === href || path.startsWith(`${href}/`);
 }
 
@@ -168,7 +170,7 @@ export default function Sidebar() {
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="flex h-[68px] shrink-0 flex-col justify-center border-b border-[#e5e5e5] px-6 py-2">
           <Link
-            href="/work/actual"
+            href="/work/actual/onboarding-2"
             className="flex w-full items-center gap-2 overflow-hidden rounded-md py-2"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-black">

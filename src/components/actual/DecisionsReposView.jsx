@@ -75,7 +75,7 @@ function RepoCardLink({ owner, repo, slug, tag, stats, action }) {
       )}
       {action.kind === "syncing" && (
         <span className="inline-flex items-center gap-2 text-typ-body font-normal text-[#64748b]">
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#2076BB]" />
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0043CE]" />
           {action.text}
         </span>
       )}

@@ -6,6 +6,17 @@ module.exports = {
   ],
   theme: {
     extend: {
+      /** Site-wide corner radius: 4px (Recharts bars etc. use the same value). */
+      borderRadius: {
+        none: "0",
+        sm: "4px",
+        DEFAULT: "4px",
+        md: "4px",
+        lg: "4px",
+        xl: "4px",
+        "2xl": "4px",
+        "3xl": "4px",
+      },
       fontFamily: {
         inter: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
         instrument: [
@@ -33,13 +44,13 @@ module.exports = {
           mute: "#6b7280",
           mute3: "#71717a",
           ghost: "#94a3b8",
-          accent: "#2076BB",
-          accentInk: "#2076BB",
+          accent: "#0043CE",
+          accentInk: "#0043CE",
           /** Brand gradient stops (dark saturated green → blue) */
           brandGreen: "#04EF86",
-          brandBlue: "#2076BB",
-          accentSoft: "rgba(32, 118, 187, 0.08)",
-          accentBorder: "rgba(32, 118, 187, 0.22)",
+          brandBlue: "#0043CE",
+          accentSoft: "rgba(0, 67, 206, 0.08)",
+          accentBorder: "rgba(0, 67, 206, 0.22)",
           welcome: "#1f2328",
           chipPending: "#eff3f8",
         },

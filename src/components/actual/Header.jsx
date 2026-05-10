@@ -1,6 +1,6 @@
 import { ChevronRightIcon, SearchIcon } from "./Icons";
 
-/** Matches Figma Deck “First time ever” (`903:5370`): height 68px, breadcrumb x=32, search field 256×40, primary actions right-aligned. */
+/** Actual header: height 68px, breadcrumb x=32, search field 256×40, primary actions right-aligned. */
 const HEADER_H = "h-[68px]";
 const HEADER_PAD_X = "px-8";
 

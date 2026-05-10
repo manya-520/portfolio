@@ -1,8 +1,41 @@
+import { useEffect, useMemo, useState } from "react";
 import { Dropdown, StatusChip } from "./Primitives";
 import { LoaderIcon } from "./Icons";
 
 /** Welcome banner art — `public/Group 3.png` */
 const WELCOME_BANNER_ART_SRC = encodeURI("/Group 3.png");
+
+const LOOP_MS = 60_000;
+
+/** Parse "Stage N of M" from the status line → fill percent for the strip (33, 67, 100, …). */
+function processingProgressPercent(stage) {
+  const m = typeof stage === "string" ? stage.match(/Stage\s+(\d+)\s+of\s+(\d+)/i) : null;
+  if (!m) return 33;
+  const n = Number(m[1]);
+  const total = Number(m[2]);
+  if (!Number.isFinite(total) || total < 1 || !Number.isFinite(n) || n < 1) return 33;
+  return Math.min(100, Math.round((n / total) * 100));
+}
+
+function parseCountValue(value) {
+  const n = parseInt(String(value ?? "").replace(/,/g, ""), 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatCount(n) {
+  return Math.max(0, Math.round(n)).toLocaleString("en-US");
+}
+
+function easeOutCubic(t) {
+  const x = Math.min(1, Math.max(0, t));
+  return 1 - (1 - x) ** 3;
+}
+
+/** Format loop position (0–1) as an elapsed clock for the status row. */
+function formatLoopElapsed(t) {
+  const sec = Math.min(59, Math.floor(t * 60));
+  return `${sec}s`;
+}
 
 const STAGES = [
   {
@@ -34,6 +67,7 @@ const STAGES = [
 /**
  * Welcome + Decision Processing card — aligned to Figma Deck `903:5385` (Card instance).
  * Order: grey status header → 4px split progress (361:719) → white 3-column body.
+ * `animated`: loop all stages over 60s with count-up; honors `prefers-reduced-motion` (static props).
  */
 export default function WelcomeCard({
   title = "Welcome to Actual AI",
@@ -42,7 +76,97 @@ export default function WelcomeCard({
   stage = "Stage 1 of 3",
   elapsed = "23s",
   syncStatus = "Repository Sync Complete",
+  animated = false,
 }) {
+  const [t, setT] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(mq.matches);
+    const onChange = () => setReduceMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const runTimeline = animated && !reduceMotion;
+
+  useEffect(() => {
+    if (!runTimeline) return;
+    const start = Date.now();
+    const id = window.setInterval(() => {
+      setT(((Date.now() - start) % LOOP_MS) / LOOP_MS);
+    }, 50);
+    return () => window.clearInterval(id);
+  }, [runTimeline]);
+
+  const targets = useMemo(
+    () =>
+      stages.map((s) =>
+        s.rows.map((row, j) => {
+          let v = parseCountValue(row.value);
+          if (
+            s.key === "generation" &&
+            j === 0 &&
+            v === 0 &&
+            stages.length === 3
+          ) {
+            v = 6;
+          }
+          return v;
+        })
+      ),
+    [stages]
+  );
+
+  const phaseCount = stages.length;
+  const raw = t * phaseCount;
+  const activePhase = Math.min(phaseCount - 1, Math.floor(raw));
+  const u = Math.min(1, Math.max(0, raw - activePhase));
+  const easedU = easeOutCubic(u);
+
+  const displayStages = useMemo(() => {
+    if (!runTimeline) return null;
+    return stages.map((s, colIdx) => {
+      let chipTone = "pending";
+      let chip = "Pending";
+      if (colIdx < activePhase) {
+        chipTone = "success";
+        chip = "Complete";
+      } else if (colIdx === activePhase) {
+        chipTone = "running";
+        chip = "Running";
+      }
+
+      const rows = s.rows.map((row, rowIdx) => {
+        const target = targets[colIdx]?.[rowIdx] ?? 0;
+        let n = 0;
+        if (colIdx < activePhase) n = target;
+        else if (colIdx > activePhase) n = 0;
+        else {
+          const rowCount = s.rows.length;
+          const slice = 1 / rowCount;
+          const localT = Math.min(1, Math.max(0, (u - rowIdx * slice) / slice));
+          n = target * easeOutCubic(localT);
+        }
+        return { ...row, value: formatCount(n) };
+      });
+
+      return { ...s, chipTone, chip, rows };
+    });
+  }, [runTimeline, stages, activePhase, u, targets]);
+
+  const stageLabel = runTimeline
+    ? `Stage ${activePhase + 1} of ${phaseCount}`
+    : stage;
+  const elapsedLabel = runTimeline ? formatLoopElapsed(t) : elapsed;
+  const progressPct = runTimeline
+    ? Math.min(100, Math.round(((activePhase + easedU) / phaseCount) * 100))
+    : processingProgressPercent(stage);
+
+  const stagesToRender = displayStages ?? stages;
+
   return (
     <div className="relative overflow-hidden rounded-lg border border-[#dbeafe] shadow-actualCard">
       {/* Light deck wash (Figma) — not the same as the decision progress brand gradient */}
@@ -71,7 +195,7 @@ export default function WelcomeCard({
 
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           <div className="flex shrink-0 items-center border-[#e2e8f0] sm:border-r sm:pr-6">
-            <Dropdown label="Repo name" className="h-9 w-[240px]" />
+            <Dropdown label="Data pipelines" className="h-9 w-[240px]" />
           </div>
           <div className="flex items-center gap-2">
             <span className="relative h-3 w-3 shrink-0 rounded-full bg-[#047857] ring-2 ring-[#047857]/35" />
@@ -88,15 +212,15 @@ export default function WelcomeCard({
                 </span>
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 border-r border-[#dfe4ed] pr-4">
-                    <span className="h-3 w-3 shrink-0 rounded-full border-2 border-[#2076BB] bg-white" />
+                    <span className="h-3 w-3 shrink-0 rounded-full border-2 border-[#0043CE] bg-white" />
                     <span className="whitespace-nowrap text-typ-body text-actual-mute">
-                      {stage}
+                      {stageLabel}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-actual-muted2">
                     <LoaderIcon size={16} />
                     <span className="whitespace-nowrap text-typ-body tabular-nums">
-                      {elapsed}
+                      {elapsedLabel}
                     </span>
                   </div>
                 </div>
@@ -104,21 +228,35 @@ export default function WelcomeCard({
             </div>
           </div>
 
-          {/* Progress strip between status header and columns */}
+          {/* Progress strip — fill tracks "Stage N of M" (e.g. stage 2 → ~67%). */}
           <div
-            className="grid h-1 w-full shrink-0 grid-cols-[361fr_719fr]"
+            className="flex h-1 w-full shrink-0"
             role="progressbar"
-            aria-valuenow={33}
+            aria-valuenow={progressPct}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label="Processing stages progress"
           >
-            <div className="min-h-[4px] bg-gradient-to-r from-[#04EF86] to-[#2076BB]" />
-            <div className="min-h-[4px] bg-[#dfe4ed]" />
+            <div
+              className={
+                runTimeline
+                  ? "min-h-[4px] shrink-0 bg-gradient-to-r from-[#04EF86] to-[#0043CE]"
+                  : "min-h-[4px] shrink-0 bg-gradient-to-r from-[#04EF86] to-[#0043CE] transition-[width] duration-300 ease-out"
+              }
+              style={{ width: `${progressPct}%` }}
+            />
+            <div
+              className={
+                runTimeline
+                  ? "min-h-[4px] shrink-0 bg-[#dfe4ed]"
+                  : "min-h-[4px] shrink-0 bg-[#dfe4ed] transition-[width] duration-300 ease-out"
+              }
+              style={{ width: `${100 - progressPct}%` }}
+            />
           </div>
 
           <div className="grid grid-cols-1 divide-y divide-[#dfe4ed] bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
-            {stages.map((s) => (
+            {stagesToRender.map((s) => (
               <div
                 key={s.key}
                 className="flex items-start justify-between gap-4 px-6 py-4"
