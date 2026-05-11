@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Header from "./Header";
-import ScreenSwitcher from "./ScreenSwitcher";
 import Sidebar from "./Sidebar";
 
 export default function ActualLayout({
@@ -22,7 +21,6 @@ export default function ActualLayout({
             {children}
           </main>
         </div>
-        <ScreenSwitcher />
       </div>
     </>
   );

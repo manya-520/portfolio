@@ -15,6 +15,7 @@ const ContributionSection = dynamic(
   }
 );
 import FeatureReportCards from "@/components/actual/FeatureReportCards";
+import { ArrowUpRightIcon } from "@/components/actual/Icons";
 import {
   ActionLink,
   BrowseCategoryChip,
@@ -67,24 +68,6 @@ const ACTIVE_REPO_CARDS = [
     ],
   },
   {
-    key: "ledger",
-    kind: "stats",
-    variant: "in-sync",
-    owner: "actual-ledger",
-    repo: "billing-core",
-    stats: [
-      { label: "Decisions", value: "8" },
-      { label: "Suggested", value: "3" },
-      { label: "Updates", value: "1" },
-    ],
-  },
-  {
-    key: "stratum",
-    kind: "empty",
-    owner: "actual-stratum",
-    repo: "data-pipelines",
-  },
-  {
     key: "cascade",
     kind: "stats",
     variant: "review-pr",
@@ -98,15 +81,27 @@ const ACTIVE_REPO_CARDS = [
     ],
   },
   {
+    key: "ledger",
+    kind: "stats",
+    variant: "in-sync",
+    owner: "actual-ledger",
+    repo: "billing-core",
+    stats: [
+      { label: "Decisions", value: "8" },
+      { label: "Suggested", value: "3" },
+      { label: "Updates", value: "1" },
+    ],
+  },
+  {
     key: "nimbus",
     kind: "stats",
     variant: "in-sync",
-    owner: "actual-nimbus",
-    repo: "event-bus",
+    owner: "actual-software",
+    repo: "on-prem",
     stats: [
-      { label: "Decisions", value: "18" },
+      { label: "Decisions", value: "24" },
       { label: "Suggested", value: "6" },
-      { label: "Updates", value: "4" },
+      { label: "Updates", value: "2" },
     ],
   },
   {
@@ -114,6 +109,12 @@ const ACTIVE_REPO_CARDS = [
     kind: "empty",
     owner: "actual-forge",
     repo: "build-images",
+  },
+  {
+    key: "stratum",
+    kind: "empty",
+    owner: "actual-stratum",
+    repo: "data-pipelines",
   },
 ];
 
@@ -150,7 +151,12 @@ export default function ActualOnboarding2() {
                         c.variant === "review-pr" ? (
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <BrowseCategoryChip />
-                            <ActionLink href={c.href}>Review PR</ActionLink>
+                            <StatusChip tone="running">
+                              <span className="inline-flex items-center gap-1">
+                                Review PR
+                                <ArrowUpRightIcon size={12} className="shrink-0" />
+                              </span>
+                            </StatusChip>
                           </div>
                         ) : (
                           <div className="flex flex-wrap items-center justify-between gap-2">

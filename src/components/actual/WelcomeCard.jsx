@@ -5,7 +5,7 @@ import { LoaderIcon } from "./Icons";
 /** Welcome banner art — `public/Group 3.png` */
 const WELCOME_BANNER_ART_SRC = encodeURI("/Group 3.png");
 
-const LOOP_MS = 60_000;
+const LOOP_MS = 10_000;
 
 /** Parse "Stage N of M" from the status line → fill percent for the strip (33, 67, 100, …). */
 function processingProgressPercent(stage) {
@@ -33,7 +33,8 @@ function easeOutCubic(t) {
 
 /** Format loop position (0–1) as an elapsed clock for the status row. */
 function formatLoopElapsed(t) {
-  const sec = Math.min(59, Math.floor(t * 60));
+  const totalSec = Math.max(1, Math.round(LOOP_MS / 1000));
+  const sec = Math.min(totalSec - 1, Math.floor(t * totalSec));
   return `${sec}s`;
 }
 
@@ -67,11 +68,11 @@ const STAGES = [
 /**
  * Welcome + Decision Processing card — aligned to Figma Deck `903:5385` (Card instance).
  * Order: grey status header → 4px split progress (361:719) → white 3-column body.
- * `animated`: loop all stages over 60s with count-up; honors `prefers-reduced-motion` (static props).
+ * `animated`: loop all stages over 10s with count-up; honors `prefers-reduced-motion` (static props).
  */
 export default function WelcomeCard({
   title = "Welcome to Actual AI",
-  description = "We are processing your repositories it can take upto 4 hours to generate decisions. We will email you once your decisions have been generated!",
+  description = "",
   stages = STAGES,
   stage = "Stage 1 of 3",
   elapsed = "23s",
@@ -189,9 +190,11 @@ export default function WelcomeCard({
         <h2 className="text-typ-header font-semibold text-black">
           {title}
         </h2>
-        <p className="text-typ-body font-normal text-actual-muted2">
-          {description}
-        </p>
+        {description ? (
+          <p className="text-typ-body font-normal text-actual-muted2">
+            {description}
+          </p>
+        ) : null}
 
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           <div className="flex shrink-0 items-center border-[#e2e8f0] sm:border-r sm:pr-6">

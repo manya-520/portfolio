@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   ArrowRightIcon,
   ArrowUpRightIcon,
-  CircleCheckIcon,
   GitBranchIcon,
   LoaderIcon,
   PlusIcon,
@@ -12,11 +11,12 @@ import {
 import {
   BrowseCategoryChip,
   GeneratingStatePanel,
+  StatusChip,
 } from "@/components/actual/Primitives";
 import { DECISIONS_REPO_ROWS } from "@/data/decisionsRepos";
 
 const REPO_CARD_SHELL =
-  "flex h-full min-h-[140px] w-full min-w-0 flex-col gap-5 rounded-lg border border-[#dfe4ed] bg-white p-5";
+  "flex h-[168px] w-full min-w-0 flex-col gap-5 rounded-lg border border-[#dfe4ed] bg-white p-5";
 
 const railAccentClass =
   "inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-typ-body font-semibold text-actual-accent";
@@ -28,17 +28,16 @@ function RepoCardFooterRail({ adrState }) {
   switch (adrState) {
     case "in-review":
       return (
-        <span className={railAccentClass}>
-          Review PR
-          <ArrowUpRightIcon size={12} className="shrink-0" />
-        </span>
+        <StatusChip tone="running">
+          <span className="inline-flex items-center gap-1">
+            Review PR
+            <ArrowUpRightIcon size={12} className="shrink-0" />
+          </span>
+        </StatusChip>
       );
     case "synced":
       return (
-        <span className="inline-flex shrink-0 items-center gap-2 text-typ-body font-semibold text-[#5A8D6E]">
-          <CircleCheckIcon size={14} className="shrink-0 text-[#5A8D6E]" />
-          Synced
-        </span>
+        <StatusChip tone="success">In Sync</StatusChip>
       );
     case "changes":
       return (
@@ -117,7 +116,7 @@ function AddRepoCard() {
   return (
     <button
       type="button"
-      className="group flex h-full min-h-[140px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-[#dfe4ed] bg-[#f9fafb] p-4 text-[#64748b] transition-colors hover:border-[#707A8A] hover:bg-[#F9FAFB] hover:text-[#0f172a]"
+      className="group flex h-[168px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-[#dfe4ed] bg-[#f9fafb] p-4 text-[#64748b] transition-colors hover:border-[#707A8A] hover:bg-[#F9FAFB] hover:text-[#0f172a]"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfe4ed] bg-white text-[#94a3b8] group-hover:text-[#0f172a]">
         <PlusIcon size={20} />
@@ -133,6 +132,8 @@ function AddRepoCard() {
 }
 
 export default function DecisionsReposView() {
+  const flatCells = DECISIONS_REPO_ROWS.flat();
+
   return (
     <div className="mx-auto w-full max-w-[1680px] px-6 pb-8 pt-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -164,17 +165,13 @@ export default function DecisionsReposView() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-5 sm:gap-6">
-        {DECISIONS_REPO_ROWS.map((row, ri) => (
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
+        {flatCells.map((cell, i) => (
           <div
-            key={ri}
-            className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3"
+            key={cell.addMore ? "addMore" : cell.slug ?? `cell-${i}`}
+            className="h-full min-h-0 min-w-0"
           >
-            {row.map((cell, ci) => (
-              <div key={`${ri}-${ci}`} className="h-full min-h-0 min-w-0">
-                {cell.addMore ? <AddRepoCard /> : <RepoCardLink {...cell} />}
-              </div>
-            ))}
+            {cell.addMore ? <AddRepoCard /> : <RepoCardLink {...cell} />}
           </div>
         ))}
       </div>

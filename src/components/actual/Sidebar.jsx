@@ -289,7 +289,7 @@ export default function Sidebar() {
         <div className="border-t border-[#E5E5E5]">
           <div className="px-2 pb-2 pt-4">
             <div className="flex items-center gap-2 overflow-hidden rounded-md p-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fbcfe8] to-[#a78bfa] text-typ-body font-semibold leading-none text-white">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#dbeafe] to-[#60a5fa] text-typ-body font-semibold leading-none text-[#1d4ed8]">
                 M
               </span>
               <div className="min-w-0 flex-1 text-[#334155]">

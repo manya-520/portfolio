@@ -26,7 +26,7 @@ const chartConfig = {
   },
   tickets: {
     label: "Tickets",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-1) / 0.28)",
   },
 };
 
