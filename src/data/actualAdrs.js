@@ -59,7 +59,7 @@ export const ADRS = [
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/on-prem",
     /** Workspace sidebar + detail pill (same string both places). */
-    activeDaysLabel: "Active for 82 days",
+    activeDaysLabel: "Active for 16 days",
     scopePaths: [
       "services/auth/**/*",
       "packages/identity/**/*",
@@ -95,7 +95,7 @@ export const ADRS = [
     statusTone: "success",
     primaryAction: "View in repo",
     href: "/work/actual/adr/on-prem",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 17 days",
     scopePaths: [
       "infra/kms/**/*",
       "infra/hsm/**/*",
@@ -131,7 +131,7 @@ export const ADRS = [
     statusTone: "running",
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/on-prem",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 18 days",
     scopePaths: [
       "api/**/*",
       "proto/**/*",
@@ -167,7 +167,7 @@ export const ADRS = [
     statusTone: "pending",
     primaryAction: "Continue draft",
     href: "/work/actual/adr/on-prem",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 19 days",
     scopePaths: [
       "infra/terraform/**/*",
       "services/workers/**/*",
@@ -202,7 +202,7 @@ export const ADRS = [
     statusTone: "success",
     primaryAction: "View in repo",
     href: "/work/actual/adr/web-platform",
-    activeDaysLabel: "Active for 140 days",
+    activeDaysLabel: "Active for 14 days",
     sections: [
       {
         title: "Context",
@@ -233,7 +233,7 @@ export const ADRS = [
     statusTone: "running",
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/web-platform",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 15 days",
     sections: [
       {
         title: "Context",
@@ -264,7 +264,7 @@ export const ADRS = [
     statusTone: "success",
     primaryAction: "View in repo",
     href: "/work/actual/adr/web-platform",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 21 days",
     sections: [
       {
         title: "Context",
@@ -295,7 +295,7 @@ export const ADRS = [
     statusTone: "pending",
     primaryAction: "Continue draft",
     href: "/work/actual/adr/web-platform",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 22 days",
     sections: [
       {
         title: "Context",
@@ -326,7 +326,7 @@ export const ADRS = [
     primaryAction: "Review changes",
     href: "/work/actual/adr/agents-runtime",
     updatesAvailable: true,
-    activeDaysLabel: "Active for 56 days",
+    activeDaysLabel: "Active for 23 days",
     sections: [
       {
         title: "Context",
@@ -357,7 +357,7 @@ export const ADRS = [
     statusTone: "success",
     primaryAction: "View in repo",
     href: "/work/actual/adr/agents-runtime",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 24 days",
     sections: [
       {
         title: "Context",
@@ -389,7 +389,7 @@ export const ADRS = [
     primaryAction: "Review changes",
     href: "/work/actual/adr/agents-runtime",
     updatesAvailable: true,
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 25 days",
     sections: [
       {
         title: "Context",
@@ -420,7 +420,7 @@ export const ADRS = [
     statusTone: "running",
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/agents-runtime",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 26 days",
     sections: [
       {
         title: "Context",
@@ -450,7 +450,7 @@ export const ADRS = [
     statusTone: "pending",
     primaryAction: "Continue draft",
     href: "/work/actual/adr/design-system",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 11 days",
     sections: [
       {
         title: "Context",
@@ -481,7 +481,7 @@ export const ADRS = [
     statusTone: "running",
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/design-system",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 12 days",
     sections: [
       {
         title: "Context",
@@ -512,7 +512,7 @@ export const ADRS = [
     statusTone: "success",
     primaryAction: "View in repo",
     href: "/work/actual/adr/design-system",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 13 days",
     sections: [
       {
         title: "Context",
@@ -543,7 +543,7 @@ export const ADRS = [
     statusTone: "pending",
     primaryAction: "Continue draft",
     href: "/work/actual/adr/design-system",
-    activeDaysLabel: "Active for 300 days",
+    activeDaysLabel: "Active for 20 days",
     sections: [
       {
         title: "Context",
