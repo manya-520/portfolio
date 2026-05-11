@@ -7,7 +7,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "on-prem",
       tag: "Backend",
       stats: { Decisions: 24, Suggested: 6, Updates: 2 },
-      action: { adrState: "in-review" },
+      action: { adrState: "synced" },
     },
     {
       owner: "actual-software",
@@ -15,7 +15,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "web-platform",
       tag: "Frontend",
       stats: { Decisions: 18, Suggested: 3, Updates: 0 },
-      action: { adrState: "synced" },
+      action: { adrState: "in-review" },
     },
     {
       owner: "actual-software",
@@ -95,4 +95,16 @@ export function getDecisionsRepoSlugs() {
     }
   }
   return slugs;
+}
+
+/** Stats shown on Decisions repo card for a given slug. */
+export function getDecisionsRepoStatsBySlug(repoSlug) {
+  for (const row of DECISIONS_REPO_ROWS) {
+    for (const cell of row) {
+      if (cell && !cell.addMore && cell.slug === repoSlug) {
+        return cell.stats ?? null;
+      }
+    }
+  }
+  return null;
 }

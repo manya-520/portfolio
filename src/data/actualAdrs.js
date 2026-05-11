@@ -96,6 +96,11 @@ export const ADRS = [
     primaryAction: "View in repo",
     href: "/work/actual/adr/on-prem",
     activeDaysLabel: "Active for 300 days",
+    scopePaths: [
+      "infra/kms/**/*",
+      "infra/hsm/**/*",
+      "services/signing/**/*",
+    ],
     sections: [
       {
         title: "Context",
@@ -127,6 +132,11 @@ export const ADRS = [
     primaryAction: "Approve & Sync",
     href: "/work/actual/adr/on-prem",
     activeDaysLabel: "Active for 300 days",
+    scopePaths: [
+      "api/**/*",
+      "proto/**/*",
+      "services/**/*",
+    ],
     sections: [
       {
         title: "Context",
@@ -158,6 +168,11 @@ export const ADRS = [
     primaryAction: "Continue draft",
     href: "/work/actual/adr/on-prem",
     activeDaysLabel: "Active for 300 days",
+    scopePaths: [
+      "infra/terraform/**/*",
+      "services/workers/**/*",
+      "packages/checkpointing/**/*",
+    ],
     sections: [
       {
         title: "Context",

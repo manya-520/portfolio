@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowUpDown,
+  ArrowUpRight,
   Clock,
   GalleryVertical,
+  Info,
   ListFilter,
+  LoaderCircle,
   Plus,
   Search,
 } from "lucide-react";
@@ -14,6 +18,84 @@ import { cn } from "@/lib/utils";
 
 import ADRDetailPanel from "./ADRDetailPanel";
 
+function ContextSyncBanner({ syncBanner }) {
+  const phase = syncBanner?.phase;
+  const startedAt = syncBanner?.startedAt;
+
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (phase !== "syncing" || typeof startedAt !== "number") return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [phase, startedAt]);
+
+  const seconds = useMemo(() => {
+    if (phase !== "syncing" || typeof startedAt !== "number") return 0;
+    const s = Math.floor((now - startedAt) / 1000);
+    return Math.max(0, Math.min(3, s));
+  }, [now, phase, startedAt]);
+
+  if (!phase) return null;
+
+  if (phase === "review") {
+    return (
+      <div className="w-full rounded-lg bg-[#eaf2ff]">
+        <div className="flex w-full items-center gap-2 rounded-lg border border-[#dbeafe] px-4 py-2">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-typ-body font-semibold text-[#0043ce]">
+              Review your PR
+            </span>
+            <span className="text-typ-body font-normal text-black">
+              Your pull request is ready. Merge it to update your context files
+              with your latest decisions.
+            </span>
+          </div>
+          <button
+            type="button"
+            className="inline-flex shrink-0 items-center gap-1.5 text-typ-body font-semibold text-[#0043ce] underline underline-offset-2 hover:text-[#00339a]"
+          >
+            Review PR
+            <ArrowUpRight size={18} className="shrink-0" strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full rounded-lg bg-[#eaf2ff]">
+      <div className="flex w-full items-center gap-2 rounded-lg border border-[#dbeafe] px-4 py-3">
+        <LoaderCircle
+          size={16}
+          className="shrink-0 text-[#0043ce] animate-spin"
+          strokeWidth={2}
+          aria-hidden
+        />
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-typ-body font-semibold text-[#0043ce]">
+            Syncing in progress
+          </span>
+          <span className="text-typ-body font-normal text-black">
+            Your recent changes to decisions are being processed. Your PR will
+            be ready for review shortly.
+          </span>
+          <Info
+            size={16}
+            className="shrink-0 text-[#0043ce]"
+            strokeWidth={2}
+            aria-hidden
+          />
+        </div>
+        <div className="flex h-6 shrink-0 items-center border-l border-[#dfe4ed] pl-4">
+          <span className="text-typ-body font-normal text-[#64748b]">
+            Started {seconds}s ago
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Figma Deck master-detail (`903:6469` region): left ADR cards, top tabs + toolbar,
  * right Policy / Scope / Explanation detail.
@@ -22,13 +104,36 @@ export default function ADRWorkspaceView({
   selectedAdrId,
   adr,
   listAdrs,
+  repoStats,
+  syncBanner,
   resolvedScopePaths,
   scopeEdit,
 }) {
   let sidebarAdrs =
     listAdrs?.length > 0 ? listAdrs : ADRS.filter((a) => a.repo === adr?.repo);
   if (!sidebarAdrs.length && adr) sidebarAdrs = [adr];
-  const decisionsCount = sidebarAdrs.length;
+  const decisionsCount = repoStats?.Decisions ?? sidebarAdrs.length;
+  const suggestedCount = repoStats?.Suggested ?? 0;
+  const updatesCount = repoStats?.Updates ?? 0;
+
+  const statusChip =
+    syncBanner?.phase === "syncing"
+      ? {
+          dot: "bg-[#0043ce]",
+          className: "border-[#dbeafe] bg-[#eaf2ff] text-[#0043ce]",
+          label: "Syncing",
+        }
+      : syncBanner?.phase === "review"
+        ? {
+            dot: "bg-[#0043ce]",
+            className: "border-[#dbeafe] bg-[#eaf2ff] text-[#0043ce]",
+            label: "Action required",
+          }
+        : {
+            dot: "bg-[#047857]",
+            className: "border-[#bbf7d0] bg-[#ecfdf5] text-[#047857]",
+            label: "Context files in sync",
+          };
 
   return (
     <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-6 px-6 pb-8 pt-6">
@@ -37,11 +142,15 @@ export default function ADRWorkspaceView({
           <h1 className="text-typ-header font-semibold text-actual-welcome">
             Architecture Decision Records
           </h1>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#bbf7d0] bg-[#ecfdf5] px-2.5 py-0.5 text-typ-body font-semibold text-[#047857]">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-[#047857]" />
-            Context files in sync
+          <span
+            className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-typ-body font-semibold ${statusChip.className}`}
+          >
+            <span className={`h-2 w-2 shrink-0 rounded-full ${statusChip.dot}`} />
+            {statusChip.label}
           </span>
         </div>
+
+        <ContextSyncBanner syncBanner={syncBanner} />
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
           <nav
@@ -51,8 +160,8 @@ export default function ADRWorkspaceView({
           >
             {[
               ["Decisions", decisionsCount],
-              ["Suggested", 0],
-              ["Updates", 0],
+              ["Suggested", suggestedCount],
+              ["Updates", updatesCount],
               ["Drafts", 0],
               ["Archived", null],
             ].map(([label, count], i) => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import ActualLayout from "@/components/actual/ActualLayout";
@@ -11,6 +11,7 @@ import {
   persistScopeOverrides,
 } from "@/lib/adrScopeStorage";
 import {
+  getDecisionsRepoStatsBySlug,
   getDecisionsRepoSlugs,
   REPO_SLUG_TO_ADR_ID,
 } from "@/data/decisionsRepos";
@@ -75,8 +76,40 @@ export default function RepoADRDetail({ adrId, repoSlug }) {
 
   const [scopeOverrides, setScopeOverrides] = useState({});
   useEffect(() => {
-    setScopeOverrides(loadScopeOverrides());
-  }, []);
+    let alive = true;
+
+    const refresh = async () => {
+      if (!alive) return;
+      const local = loadScopeOverrides();
+      setScopeOverrides(local);
+      try {
+        const remote = await fetchScopeOverridesFromApi();
+        if (!alive || !remote) return;
+        // Never clobber local overrides with an empty API map.
+        if (Object.keys(remote).length === 0) return;
+        const merged = { ...local, ...remote };
+        setScopeOverrides(merged);
+        persistScopeOverrides(merged);
+      } catch {
+        // ignore — local storage fallback is fine for prototype
+      }
+    };
+
+    refresh();
+
+    const onFocus = () => refresh();
+    const onVis = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      alive = false;
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [router.asPath]);
 
   const resolvedScopePaths = useMemo(() => {
     const saved = scopeOverrides[adr.id];
@@ -104,9 +137,35 @@ export default function RepoADRDetail({ adrId, repoSlug }) {
     );
   };
 
+  const [syncBanner, setSyncBanner] = useState(null);
+  const syncBannerTimeoutRef = useRef(null);
+  useEffect(() => {
+    return () => {
+      if (syncBannerTimeoutRef.current) {
+        clearTimeout(syncBannerTimeoutRef.current);
+        syncBannerTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   const saveScopeDraft = async () => {
     if (!scopeDraftPaths) return;
     const next = { ...scopeOverrides, [adr.id]: scopeDraftPaths };
+
+    const removedCount = (resolvedScopePaths ?? []).filter(
+      (p) => !scopeDraftPaths.includes(p)
+    ).length;
+    if (removedCount > 0) {
+      const startedAt = Date.now();
+      setSyncBanner({ phase: "syncing", startedAt });
+      if (syncBannerTimeoutRef.current) {
+        clearTimeout(syncBannerTimeoutRef.current);
+      }
+      syncBannerTimeoutRef.current = setTimeout(() => {
+        setSyncBanner({ phase: "review", startedAt });
+      }, 3_000);
+    }
+
     try {
       await patchScopeOverrideOnApi(adr.id, scopeDraftPaths);
     } catch (e) {
@@ -120,6 +179,7 @@ export default function RepoADRDetail({ adrId, repoSlug }) {
   const cancelScopeDraft = () => setScopeDraftPaths(null);
 
   const breadcrumb = ["Home", "Decisions", adr.repo];
+  const repoStats = getDecisionsRepoStatsBySlug(repoSlug);
 
   return (
     <ActualLayout
@@ -130,6 +190,8 @@ export default function RepoADRDetail({ adrId, repoSlug }) {
         selectedAdrId={adr.id}
         adr={adr}
         listAdrs={listAdrs}
+        repoStats={repoStats}
+        syncBanner={syncBanner}
         resolvedScopePaths={resolvedScopePaths}
         scopeEdit={{
           active: scopeEditing,

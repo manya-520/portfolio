@@ -29,7 +29,7 @@ function RepoCardFooterRail({ adrState }) {
     case "in-review":
       return (
         <span className={railAccentClass}>
-          In review
+          Review PR
           <ArrowUpRightIcon size={12} className="shrink-0" />
         </span>
       );
