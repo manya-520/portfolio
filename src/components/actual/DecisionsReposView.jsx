@@ -1,37 +1,75 @@
 import Link from "next/link";
 import {
+  ArrowRightIcon,
+  ArrowUpRightIcon,
+  CircleCheckIcon,
   GitBranchIcon,
+  LoaderIcon,
   PlusIcon,
   SearchIcon,
   Settings2Icon,
 } from "@/components/actual/Icons";
 import {
-  ActionLink,
+  BrowseCategoryChip,
   GeneratingStatePanel,
-  StatusChip,
-  Tag,
 } from "@/components/actual/Primitives";
 import { DECISIONS_REPO_ROWS } from "@/data/decisionsRepos";
 
 const REPO_CARD_SHELL =
   "flex h-full min-h-[140px] w-full min-w-0 flex-col gap-5 rounded-lg border border-[#dfe4ed] bg-white p-5";
 
-function RepoCardLink({ owner, repo, slug, tag, stats, action }) {
+const railAccentClass =
+  "inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-typ-body font-semibold text-actual-accent";
+
+/** Visual footer states (whole card is one `<Link>` — no nested anchors). */
+function RepoCardFooterRail({ adrState }) {
+  if (!adrState) return null;
+
+  switch (adrState) {
+    case "in-review":
+      return (
+        <span className={railAccentClass}>
+          In review
+          <ArrowUpRightIcon size={12} className="shrink-0" />
+        </span>
+      );
+    case "synced":
+      return (
+        <span className="inline-flex shrink-0 items-center gap-2 text-typ-body font-semibold text-[#5A8D6E]">
+          <CircleCheckIcon size={14} className="shrink-0 text-[#5A8D6E]" />
+          Synced
+        </span>
+      );
+    case "changes":
+      return (
+        <span className="inline-flex shrink-0 items-center gap-2 text-typ-body font-semibold text-actual-accent">
+          <LoaderIcon size={14} className="shrink-0 text-actual-accent" />
+          Changes
+        </span>
+      );
+    case "draft":
+      return (
+        <span className={railAccentClass}>
+          Draft
+          <ArrowRightIcon size={12} className="shrink-0" />
+        </span>
+      );
+    default:
+      return null;
+  }
+}
+
+function RepoCardLink({ owner, repo, slug, stats, action }) {
   const detailHref = `/work/actual/adr/${slug}`;
-  const isProcessing = action.kind === "processing";
+  const isProcessing = Boolean(action.processing);
 
   const header = (
-    <div className="flex shrink-0 flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <Tag>{tag}</Tag>
-      </div>
-      <div className="flex items-center gap-2">
-        <GitBranchIcon size={18} className="shrink-0 text-[#475569]" />
-        <p className="min-w-0 truncate text-typ-body font-normal">
-          <span className="text-[#64748b]">{owner}/</span>
-          <span className="font-semibold text-black">{repo}</span>
-        </p>
-      </div>
+    <div className="flex shrink-0 items-center gap-2">
+      <GitBranchIcon size={18} className="shrink-0 text-[#475569]" />
+      <p className="min-w-0 truncate text-typ-body font-normal">
+        <span className="text-[#64748b]">{owner}/</span>
+        <span className="font-semibold text-black">{repo}</span>
+      </p>
     </div>
   );
 
@@ -58,44 +96,16 @@ function RepoCardLink({ owner, repo, slug, tag, stats, action }) {
 
   const footer = !isProcessing ? (
     <div className="mt-auto flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-[#f1f5f9] pt-4">
-      {action.kind === "chip" && (
-        <>
-          <StatusChip tone={action.tone}>{action.chip}</StatusChip>
-          <ActionLink href={detailHref}>{action.cta}</ActionLink>
-        </>
-      )}
-      {action.kind === "alert" && (
-        <>
-          <span className="inline-flex items-center gap-1.5 text-typ-body font-normal text-[#c2410c]">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-[#f97316]" />
-            {action.text}
-          </span>
-          <ActionLink href={detailHref}>{action.cta}</ActionLink>
-        </>
-      )}
-      {action.kind === "syncing" && (
-        <span className="inline-flex items-center gap-2 text-typ-body font-normal text-[#64748b]">
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0043CE]" />
-          {action.text}
-        </span>
-      )}
+      <BrowseCategoryChip />
+      <RepoCardFooterRail adrState={action.adrState} />
     </div>
   ) : null;
 
-  if (isProcessing) {
-    return (
-      <div className={`${REPO_CARD_SHELL}`}>
-        {header}
-        {body}
-      </div>
-    );
-  }
+  const cardInteractive =
+    "outline-none transition-colors hover:border-[#707A8A] hover:bg-[#F9FAFB] focus-visible:ring-2 focus-visible:ring-actual-accent/35 focus-visible:ring-offset-2";
 
   return (
-    <Link
-      href={detailHref}
-      className={`${REPO_CARD_SHELL} transition-shadow hover:border-[#cbd5e1] hover:shadow-md`}
-    >
+    <Link href={detailHref} className={`${REPO_CARD_SHELL} ${cardInteractive}`}>
       {header}
       {body}
       {footer}
@@ -107,7 +117,7 @@ function AddRepoCard() {
   return (
     <button
       type="button"
-      className="group flex h-full min-h-[140px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-[#dfe4ed] bg-[#f9fafb] p-4 text-[#64748b] hover:border-[#0f172a] hover:bg-white hover:text-[#0f172a]"
+      className="group flex h-full min-h-[140px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-[#dfe4ed] bg-[#f9fafb] p-4 text-[#64748b] transition-colors hover:border-[#707A8A] hover:bg-[#F9FAFB] hover:text-[#0f172a]"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfe4ed] bg-white text-[#94a3b8] group-hover:text-[#0f172a]">
         <PlusIcon size={20} />
@@ -127,12 +137,11 @@ export default function DecisionsReposView() {
     <div className="mx-auto w-full max-w-[1680px] px-6 pb-8 pt-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 max-w-2xl">
-          <h1 className="text-typ-header font-semibold text-black">
-            Decisions
+          <h1 className="text-typ-header font-bold leading-tight text-black">
+            Architecture Decision Records
           </h1>
-          <p className="mt-2 text-typ-body text-[#64748b]">
-            Architectural decisions per repository. Open a repo to review the
-            latest suggested ADR, status across coding agents, and sync state.
+          <p className="mt-2 max-w-xl text-typ-body font-normal leading-snug text-[#64748b]">
+            Document and track architectural decisions for your repositories.
           </p>
         </div>
 
@@ -147,10 +156,10 @@ export default function DecisionsReposView() {
           </div>
           <button
             type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-lg border border-[#dfe4ed] bg-white px-3 text-typ-body font-medium text-[#0f172a] hover:bg-[#f8fafc]"
+            aria-label="Filters"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#dfe4ed] bg-white hover:bg-[#f8fafc]"
           >
-            <Settings2Icon size={16} />
-            Filters
+            <Settings2Icon size={18} className="text-[#94a3b8]" />
           </button>
         </div>
       </div>

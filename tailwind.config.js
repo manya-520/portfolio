@@ -6,16 +6,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      /** Site-wide corner radius: 4px (Recharts bars etc. use the same value). */
+      /** Site-wide corner radius: 8px (`rounded-full` stays circular via default `full`). */
       borderRadius: {
         none: "0",
-        sm: "4px",
-        DEFAULT: "4px",
-        md: "4px",
-        lg: "4px",
-        xl: "4px",
-        "2xl": "4px",
-        "3xl": "4px",
+        sm: "8px",
+        DEFAULT: "8px",
+        md: "8px",
+        lg: "8px",
+        xl: "8px",
+        "2xl": "8px",
+        "3xl": "8px",
       },
       fontFamily: {
         inter: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],

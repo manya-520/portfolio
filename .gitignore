@@ -15,6 +15,9 @@
 /build
 /dist
 
+# Local ADR scope overrides (written by /api/adr/scopes in dev)
+/data/adr-scope-overrides.json
+
 # Misc
 .DS_Store
 *.pem

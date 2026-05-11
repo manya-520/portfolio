@@ -66,8 +66,8 @@ export default function ContributionSection() {
                 cursor={false}
                 content={<ChartTooltipContent indicator="dashed" />}
               />
-              <Bar dataKey="edm" fill="var(--color-edm)" radius={4} />
-              <Bar dataKey="tickets" fill="var(--color-tickets)" radius={4} />
+              <Bar dataKey="edm" fill="var(--color-edm)" radius={8} />
+              <Bar dataKey="tickets" fill="var(--color-tickets)" radius={8} />
             </BarChart>
           </ChartContainer>
         </CardContent>

@@ -1,16 +1,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { ACTUAL_PROTOTYPE_SCREENS } from "@/data/actualPrototypeScreens";
+
 import { useHydratedActualPath } from "./useHydratedActualPath";
 
-const SCREENS = [
-  { href: "/work/actual/onboarding-2", label: "1. Processing" },
-  { href: "/work/actual/adr", label: "2. Decisions (repos)" },
-  { href: "/work/actual/adr/on-prem", label: "3. ADR — In review" },
-  { href: "/work/actual/adr/web-platform", label: "4. ADR — Synced" },
-  { href: "/work/actual/adr/agents-runtime", label: "5. ADR — Changes" },
-  { href: "/work/actual/adr/design-system", label: "6. ADR — Draft" },
-];
+const SCREENS = ACTUAL_PROTOTYPE_SCREENS;
 
 function resolveScreenHref(path) {
   const sorted = [...SCREENS].sort((a, b) => b.href.length - a.href.length);
@@ -53,6 +48,8 @@ export default function ScreenSwitcher() {
               <li key={s.href}>
                 <Link
                   href={s.href}
+                  prefetch
+                  scroll
                   onClick={() => setOpen(false)}
                   className={[
                     "flex items-center justify-between px-3 py-2 text-typ-body",

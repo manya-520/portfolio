@@ -268,6 +268,15 @@ export function TrendingUpIcon(props) {
   );
 }
 
+export function ClockIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 3" />
+    </Svg>
+  );
+}
+
 export function LoaderIcon({ size = 16, className = "" }) {
   return (
     <svg

@@ -26,7 +26,7 @@ export function StatusChip({ children, tone = "pending" }) {
 
 export function Tag({ children }) {
   return (
-    <span className="inline-flex h-7 items-center rounded-md border border-[#e4e4e7] bg-white px-2.5 text-typ-helper font-medium text-[#52525b]">
+    <span className="inline-flex h-8 items-center rounded-lg border border-[#e4e4e7] bg-white px-3 text-typ-body font-medium text-[#52525b]">
       {children}
     </span>
   );

@@ -7,12 +7,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "on-prem",
       tag: "Backend",
       stats: { Decisions: 24, Suggested: 6, Updates: 2 },
-      action: {
-        kind: "chip",
-        chip: "Updates Available",
-        tone: "warning",
-        cta: "Review",
-      },
+      action: { adrState: "in-review" },
     },
     {
       owner: "actual-software",
@@ -20,11 +15,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "web-platform",
       tag: "Frontend",
       stats: { Decisions: 18, Suggested: 3, Updates: 0 },
-      action: {
-        kind: "alert",
-        text: "1 conflicting decision",
-        cta: "Resolve",
-      },
+      action: { adrState: "synced" },
     },
     {
       owner: "actual-software",
@@ -32,12 +23,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "agents-runtime",
       tag: "Infra",
       stats: { Decisions: 31, Suggested: 8, Updates: 1 },
-      action: {
-        kind: "chip",
-        chip: "All Synced",
-        tone: "success",
-        cta: "View",
-      },
+      action: { adrState: "changes" },
     },
   ],
   [
@@ -47,12 +33,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "design-system",
       tag: "Frontend",
       stats: { Decisions: 12, Suggested: 2, Updates: 0 },
-      action: {
-        kind: "chip",
-        chip: "All Synced",
-        tone: "success",
-        cta: "View",
-      },
+      action: { adrState: "draft" },
     },
     {
       owner: "actual-software",
@@ -60,7 +41,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "billing-service",
       tag: "Backend",
       stats: { Decisions: 22, Suggested: 5, Updates: 4 },
-      action: { kind: "syncing", text: "Syncing changes…" },
+      action: { adrState: "changes" },
     },
     {
       owner: "actual-software",
@@ -68,12 +49,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "analytics-pipeline",
       tag: "Data",
       stats: { Decisions: 16, Suggested: 1, Updates: 0 },
-      action: {
-        kind: "chip",
-        chip: "All Synced",
-        tone: "success",
-        cta: "View",
-      },
+      action: { adrState: "in-review" },
     },
   ],
   [
@@ -83,7 +59,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "ml-evals",
       tag: "Data",
       stats: { Decisions: null, Suggested: null, Updates: null },
-      action: { kind: "processing", text: "Generating Decisions" },
+      action: { processing: true, text: "Generating Decisions" },
     },
     {
       owner: "actual-software",
@@ -91,7 +67,7 @@ export const DECISIONS_REPO_ROWS = [
       slug: "monorepo",
       tag: "Infra",
       stats: { Decisions: 9, Suggested: 4, Updates: 1 },
-      action: { kind: "syncing", text: "Syncing changes…" },
+      action: { adrState: "changes" },
     },
     { addMore: true },
   ],

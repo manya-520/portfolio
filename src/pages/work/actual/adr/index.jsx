@@ -3,7 +3,10 @@ import DecisionsReposView from "@/components/actual/DecisionsReposView";
 
 export default function DecisionsIndex() {
   return (
-    <ActualLayout breadcrumb={["Home", "Decisions"]} title="Decisions · Actual AI">
+    <ActualLayout
+      breadcrumb={["Home", "Decisions"]}
+      title="Architecture Decision Records · Actual AI"
+    >
       <DecisionsReposView />
     </ActualLayout>
   );
