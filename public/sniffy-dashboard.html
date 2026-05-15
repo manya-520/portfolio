@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sniffy — Overview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sidebar-w: 272px;
+        --rail-w: 340px;
+        --r-sm: 4px;
+        --r-md: 4px;
+        --r-pill: 999px;
+        --grad-brand: linear-gradient(
+          125deg,
+          #a844ed 0%,
+          #4e4ce4 45%,
+          #6d3dda 100%
+        );
+        --accent: #4e4ce4;
+        --accent-soft: rgba(78, 76, 228, 0.14);
+        --accent-line: rgba(78, 76, 228, 0.45);
+        --purple-hot: #a844ed;
+        --chart-line: #5b5fd4;
+        --chart-fill: rgba(91, 95, 212, 0.22);
+        --positive: #15803d;
+        --hairline: rgba(0, 0, 0, 0.08);
+        --hairline-strong: rgba(0, 0, 0, 0.12);
+        --text: #111018;
+        --muted: #5c6370;
+        --muted-2: #6b7280;
+        --axis: #94a3b8;
+        --page: #eceef4;
+        --page-mid: #f4f5f9;
+        --glass: rgba(255, 255, 255, 0.42);
+        --glass-2: rgba(255, 255, 255, 0.58);
+        --glass-border: rgba(255, 255, 255, 0.72);
+        --glass-inset: none;
+        --nav-active-bg: rgba(78, 76, 228, 0.1);
+        --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      :root[data-theme="dark"] {
+        --text: #f4f4f8;
+        --muted: #a1a7b3;
+        --muted-2: #9ca3af;
+        --axis: #7c8494;
+        --page: #0c0c0f;
+        --page-mid: #12121a;
+        --hairline: rgba(255, 255, 255, 0.08);
+        --hairline-strong: rgba(255, 255, 255, 0.12);
+        --glass: rgba(28, 27, 35, 0.55);
+        --glass-2: rgba(36, 35, 48, 0.72);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-inset: none;
+        --nav-active-bg: rgba(120, 100, 255, 0.18);
+        --chart-fill: rgba(120, 130, 255, 0.18);
+        --positive: #4ade80;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+        font-weight: 400;
+        color: var(--text);
+        background: radial-gradient(
+            120% 80% at 20% -10%,
+            rgba(168, 68, 237, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            90% 60% at 100% 0%,
+            rgba(78, 76, 228, 0.07),
+            transparent 45%
+          ),
+          linear-gradient(180deg, var(--page) 0%, var(--page-mid) 100%);
+        -webkit-font-smoothing: antialiased;
+      }
+      :root[data-theme="dark"] body {
+        background: radial-gradient(
+            ellipse 80% 50% at 50% -20%,
+            rgba(78, 76, 228, 0.15),
+            transparent 55%
+          ),
+          linear-gradient(180deg, var(--page) 0%, var(--page-mid) 100%);
+      }
+
+      /* —— App shell: fixed side columns, scroll center —— */
+      .app {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--rail-w);
+        width: 100%;
+        max-width: 100vw;
+        height: 100dvh;
+        overflow: hidden;
+        transition: grid-template-columns 0.22s ease;
+      }
+      .app.is-rail-collapsed {
+        --rail-w: 0px;
+      }
+      .due-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #e11d48;
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .col-left,
+      .col-right {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        min-width: 0;
+        background: var(--glass);
+        backdrop-filter: blur(22px) saturate(160%);
+        -webkit-backdrop-filter: blur(22px) saturate(160%);
+        border-right: 1px solid var(--hairline);
+      }
+      .col-right {
+        border-right: none;
+        border-left: 1px solid var(--hairline);
+        transition: opacity 0.2s ease, visibility 0.2s ease, border-color 0.2s ease;
+      }
+      .app.is-rail-collapsed .col-right {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        border-left-color: transparent;
+      }
+      .col-main {
+        min-width: 0;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* —— Logo: single sharp SVG (shield + star) —— */
+      .logo-sniffy {
+        display: block;
+        width: 28px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+      .logo-sniffy svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 56px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .brand-text {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        background: var(--grad-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .nav-stack {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 12px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .nav-foot {
+        flex-shrink: 0;
+        padding: 12px 10px 14px;
+        border-top: 1px solid var(--hairline);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .nav-foot-icons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .util-item {
+        width: 34px;
+        height: 34px;
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background var(--transition), border-color var(--transition),
+          color var(--transition);
+      }
+      .util-item svg {
+        width: 18px;
+        height: 18px;
+      }
+      .util-item:hover {
+        background: var(--accent-soft);
+        border-color: rgba(78, 76, 228, 0.18);
+        color: var(--text);
+      }
+      .util-item--active {
+        background: var(--nav-active-bg);
+        border-color: rgba(78, 76, 228, 0.22);
+        color: var(--accent);
+      }
+      .left-settings-panel {
+        border: 1px solid var(--hairline);
+        border-radius: var(--r-md);
+        background: var(--glass-2);
+        backdrop-filter: blur(14px) saturate(150%);
+        -webkit-backdrop-filter: blur(14px) saturate(150%);
+        padding: 10px;
+      }
+      .left-settings-panel[hidden] {
+        display: none;
+      }
+      .left-settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .left-settings-row span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .theme-toggle {
+        border: 1px solid var(--hairline-strong);
+        border-radius: var(--r-sm);
+        background: transparent;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 500;
+        padding: 6px 10px;
+        cursor: pointer;
+        transition: background var(--transition), border-color var(--transition);
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent-line);
+        background: var(--accent-soft);
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 11px;
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        background: transparent;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.35;
+        cursor: pointer;
+        text-align: left;
+        transition: background var(--transition), border-color var(--transition),
+          color var(--transition);
+      }
+      .nav-item:hover {
+        background: var(--accent-soft);
+        border-color: rgba(78, 76, 228, 0.12);
+        color: var(--text);
+      }
+      .nav-item--active {
+        background: var(--nav-active-bg);
+        border-color: rgba(78, 76, 228, 0.2);
+        border-left-color: var(--accent);
+        color: var(--accent);
+        font-weight: 500;
+      }
+      .nav-item--active:hover {
+        border-color: var(--accent-line);
+        color: var(--accent);
+      }
+      .nav-svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        opacity: 0.88;
+      }
+      .nav-item--active .nav-svg {
+        opacity: 1;
+      }
+
+      .main-pad {
+        padding: 0 20px 28px;
+        max-width: none;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        height: 56px;
+        margin-left: -20px;
+        margin-right: -20px;
+        margin-bottom: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        padding: 0 20px;
+        margin-top: 0;
+        border-bottom: 1px solid var(--hairline);
+        background: color-mix(in srgb, var(--page-mid) 90%, transparent);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+      }
+      .crumbs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 13px;
+      }
+      .crumb {
+        border: none;
+        background: none;
+        padding: 4px 8px;
+        border-radius: var(--r-sm);
+        color: var(--muted-2);
+        cursor: pointer;
+        transition: background var(--transition), color var(--transition);
+      }
+      .crumb:hover {
+        background: var(--accent-soft);
+        color: var(--text);
+      }
+      .crumb--on {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .crumb-sep {
+        color: var(--axis);
+        user-select: none;
+      }
+      .tb-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .icon-hit {
+        width: 30px;
+        height: 30px;
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        background: transparent;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: border-color var(--transition), background var(--transition);
+      }
+      .icon-hit:hover {
+        border-color: var(--hairline-strong);
+        background: var(--accent-soft);
+      }
+      .icon-hit[aria-pressed="true"] {
+        border-color: var(--accent-line);
+      }
+      .icon-hit svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .h1 {
+        margin: 0 0 6px;
+        font-size: clamp(20px, 2.1vw, 24px);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+      .sub {
+        margin: 0 0 18px;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .glass-panel {
+        border-radius: var(--r-md);
+        border: 1px solid var(--glass-border);
+        background: var(--glass-2);
+        backdrop-filter: blur(18px) saturate(150%);
+        -webkit-backdrop-filter: blur(18px) saturate(150%);
+      }
+      .picks {
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(168, 68, 237, 0.22);
+        background: linear-gradient(
+            135deg,
+            rgba(168, 68, 237, 0.12) 0%,
+            rgba(78, 76, 228, 0.08) 100%
+          ),
+          var(--glass-2);
+        backdrop-filter: blur(20px) saturate(160%);
+        -webkit-backdrop-filter: blur(20px) saturate(160%);
+      }
+      .picks-h {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .picks-title {
+        font-size: 14px;
+        letter-spacing: 0.01em;
+        font-weight: 500;
+        background: var(--grad-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .pick {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 8px;
+        margin: 0 -8px;
+        border-radius: var(--r-sm);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: border-color var(--transition), background var(--transition);
+      }
+      .pick:hover,
+      .pick:focus-visible {
+        background: rgba(78, 76, 228, 0.06);
+        border-color: rgba(78, 76, 228, 0.2);
+        outline: none;
+      }
+      .pick p {
+        margin: 0;
+        flex: 1;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+      .pick b {
+        display: block;
+        margin-bottom: 2px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .pick svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+        opacity: 0.45;
+        stroke-width: 1.65;
+        transition: opacity var(--transition), transform var(--transition);
+      }
+      .pick:hover svg {
+        opacity: 1;
+        transform: translateX(3px);
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .kpi {
+        padding: 14px 16px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--glass-border);
+        background: var(--glass-2);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-left: 1px solid rgba(168, 68, 237, 0.35);
+        transition: border-color var(--transition), background var(--transition),
+          border-left-color var(--transition);
+      }
+      .kpi:hover {
+        border-color: var(--glass-border);
+        border-left-color: rgba(168, 68, 237, 0.35);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      :root[data-theme="dark"] .kpi:hover {
+        background: rgba(50, 48, 70, 0.85);
+      }
+      .kpi .l {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .kpi .row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .kpi .v {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+      .kpi .tr {
+        font-family: Inter, sans-serif;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--muted);
+      }
+      .kpi .tr--up {
+        color: var(--positive);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 16px;
+        align-items: start;
+      }
+      @media (max-width: 960px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .app {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr auto;
+          height: auto;
+          min-height: 100dvh;
+        }
+        .col-left,
+        .col-right {
+          border: none;
+          border-bottom: 1px solid var(--hairline);
+        }
+        .col-main {
+          overflow: visible;
+        }
+        .nav-foot-icons {
+          justify-content: flex-start;
+        }
+      }
+      @media (max-width: 1260px) {
+        :root {
+          --sidebar-w: 248px;
+          --rail-w: 308px;
+        }
+      }
+
+      .card-h {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .card-h h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .mini {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .mini-ico {
+        flex-shrink: 0;
+        opacity: 0.55;
+        color: var(--muted-2);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--hairline);
+        margin-bottom: 12px;
+      }
+      .tab {
+        padding: 8px 12px;
+        margin-bottom: -1px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        background: none;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--muted);
+        cursor: pointer;
+        border-radius: var(--r-sm) var(--r-sm) 0 0;
+        transition: color var(--transition), border-color var(--transition),
+          background var(--transition);
+      }
+      .tab:hover {
+        color: var(--text);
+        background: var(--accent-soft);
+      }
+      .tab--active {
+        color: var(--text);
+        font-weight: 500;
+        border-bottom-color: #5b5fd4;
+      }
+
+      .chart-svg .chart-grid {
+        stroke: rgba(0, 0, 0, 0.07);
+        stroke-width: 1;
+      }
+      :root[data-theme="dark"] .chart-svg .chart-grid {
+        stroke: rgba(255, 255, 255, 0.1);
+      }
+      .chart-wrap {
+        position: relative;
+      }
+      .tip {
+        position: absolute;
+        left: 52%;
+        top: 18%;
+        transform: translate(-50%, -100%);
+        padding: 6px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+        line-height: 1.35;
+        text-align: center;
+        background: rgba(30, 28, 45, 0.92);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      :root[data-theme="dark"] .tip {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px);
+      }
+      .chart-wrap:hover .tip {
+        opacity: 1;
+      }
+      .tip span {
+        display: block;
+        color: #d4d4d8;
+        font-size: 11px;
+      }
+
+      .donut-wrap {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .donut-leg {
+        flex: 1;
+        min-width: 140px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+      .leg i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--glass-border);
+        background: var(--glass-2);
+        backdrop-filter: blur(14px);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: border-color var(--transition), background var(--transition);
+      }
+      .task:hover {
+        border-color: var(--accent-line);
+        background: rgba(78, 76, 228, 0.06);
+      }
+      .task--hi {
+        border-color: rgba(168, 68, 237, 0.45);
+        background: linear-gradient(
+          135deg,
+          rgba(168, 68, 237, 0.1),
+          rgba(78, 76, 228, 0.06)
+        );
+      }
+      .task h4 {
+        margin: 0 0 4px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .task p {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .av {
+        width: 30px;
+        height: 30px;
+        border-radius: var(--r-pill);
+        background: var(--chart-line);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 30px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .case {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--glass-border);
+        background: var(--glass-2);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: border-color var(--transition);
+      }
+      .case:hover {
+        border-color: var(--accent-line);
+      }
+      .case-l {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .ico-sq {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--r-sm);
+        background: rgba(78, 76, 228, 0.1);
+        display: grid;
+        place-items: center;
+      }
+      .ico-sq svg {
+        display: block;
+        color: var(--accent);
+        opacity: 0.92;
+      }
+      .case-t {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .task-add {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--hairline);
+        border-radius: var(--r-sm);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background var(--transition), border-color var(--transition),
+          color var(--transition);
+      }
+      .task-add:hover {
+        border-color: var(--accent-line);
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .rail-h {
+        min-height: 56px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--hairline);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .rail-h-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .rail-h .rail-title {
+        font-size: 14px;
+        font-weight: 500;
+        background: var(--grad-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .rail-collapse {
+        width: 28px;
+        height: 28px;
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        background: transparent;
+        color: var(--muted);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: background var(--transition), border-color var(--transition),
+          color var(--transition);
+      }
+      .rail-collapse:hover {
+        background: var(--accent-soft);
+        border-color: rgba(78, 76, 228, 0.18);
+        color: var(--text);
+      }
+      .rail-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .brief {
+        padding: 14px 16px;
+        border-radius: var(--r-md);
+        border: 1px solid rgba(168, 68, 237, 0.28);
+        background: var(--glass-2);
+        backdrop-filter: blur(16px);
+        transition: border-color 0.35s ease;
+      }
+      .brief--flash {
+        border-color: rgba(168, 68, 237, 0.45);
+      }
+      .brief-head,
+      .brief strong {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .brief p {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.55;
+        color: var(--muted);
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        padding: 8px 12px;
+        border-radius: var(--r-sm);
+        border: 1px solid var(--hairline-strong);
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        font-size: 13px;
+        cursor: pointer;
+        transition: border-color var(--transition), background var(--transition),
+          color var(--transition);
+      }
+      .chip:hover {
+        border-color: var(--accent-line);
+        background: var(--accent-soft);
+        color: var(--text);
+      }
+      .rail-foot {
+        flex-shrink: 0;
+        padding: 12px 16px 16px;
+        border-top: 1px solid var(--hairline);
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+      }
+      .chat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--hairline-strong);
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(14px);
+      }
+      :root[data-theme="dark"] .chat {
+        background: rgba(0, 0, 0, 0.25);
+      }
+      .chat-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .chat-input::placeholder {
+        color: var(--muted);
+      }
+      .chat button {
+        width: 32px;
+        height: 32px;
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        background: transparent;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background var(--transition), border-color var(--transition);
+      }
+      .chat button:hover {
+        background: var(--accent-soft);
+        border-color: rgba(78, 76, 228, 0.18);
+      }
+      .chat button:focus-visible,
+      .chat-input:focus-visible {
+        outline: 1px solid var(--accent-line);
+        outline-offset: 0;
+      }
+      .chat button svg {
+        display: block;
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+      }
+      .chat button:hover svg {
+        color: var(--text);
+      }
+      #rail-toggle[aria-pressed="true"] {
+        border-color: var(--accent-line);
+        color: var(--accent);
+        background: var(--nav-active-bg);
+      }
+
+      .pad-chart {
+        padding: 16px 18px 18px;
+      }
+      .section-label {
+        font-size: 14px;
+        font-weight: 500;
+        margin: 4px 0 10px;
+        background: var(--grad-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sniffy mark: gradient shield + white 4-point star -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="sniffy-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#a844ed" />
+          <stop offset="45%" stop-color="#4e4ce4" />
+          <stop offset="100%" stop-color="#6d3dda" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="app" id="app-root">
+      <aside class="col-left" aria-label="Primary navigation">
+        <div class="brand-row">
+          <span class="logo-sniffy" aria-hidden="true">
+            <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill="url(#sniffy-grad)"
+                d="M14 0.5l12.2 6.4c.5.3.8.8.8 1.4v8.6c0 6.4-4.7 12.4-11.2 14.8-.5.2-1.1.2-1.6 0C7.7 29.3 3 23.3 3 16.9V8.3c0-.6.3-1.1.8-1.4L14 .5z"
+              />
+              <path fill="#fff" d="M14 9.2l3.1 5.4L14 20l-3.1-5.4 3.1-5.4z" />
+            </svg>
+          </span>
+          <span class="brand-text">Sniff AI</span>
+        </div>
+        <nav class="nav-stack" id="sb-nav">
+          <button type="button" class="nav-item" data-nav="overview">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+            Overview
+          </button>
+          <button type="button" class="nav-item nav-item--active" data-nav="dashboards">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z"/></svg>
+            Dashboards
+          </button>
+          <button type="button" class="nav-item" data-nav="cases">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Case Folders
+          </button>
+          <button type="button" class="nav-item" data-nav="libraries">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Data Libraries
+          </button>
+          <button type="button" class="nav-item" data-nav="reports">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+            Report Repositories
+          </button>
+        </nav>
+        <div class="nav-foot">
+          <div class="nav-foot-icons">
+            <button type="button" class="util-item" id="notif-btn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <button type="button" class="util-item" id="account-btn" aria-label="My account" title="My Account">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+            <button type="button" class="util-item" id="settings-trigger" aria-label="Settings" aria-expanded="false" title="Settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+          </div>
+          <div class="left-settings-panel" id="left-settings-panel" hidden>
+            <div class="left-settings-row">
+              <span>Appearance</span>
+              <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-main">
+        <div class="main-pad" id="sniffy-scope">
+          <header class="topbar">
+            <div class="crumbs">
+              <button type="button" class="crumb">Overview</button>
+              <span class="crumb-sep">/</span>
+              <button type="button" class="crumb crumb--on">Default</button>
+            </div>
+            <div class="tb-actions">
+              <button type="button" class="icon-hit" id="rail-toggle" aria-label="Toggle chat panel" aria-pressed="false" title="Toggle chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 4h18M3 10h18M3 16h10" />
+                  <path d="M15 20l4-4-4-4" />
+                </svg>
+              </button>
+              <button type="button" class="icon-hit" id="btn-star" aria-label="Favorite" aria-pressed="false">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 17.8 5.7 21l2.3-7-6-4.6h7.6L12 2z" />
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          <h1 class="h1">Good Morning, Maria</h1>
+          <p class="sub">Here is your compliance overview for today.</p>
+
+          <section class="picks glass-panel" aria-label="Sniffy's Picks">
+            <div class="picks-h">
+              <span class="logo-sniffy" style="width: 24px; height: 28px" aria-hidden="true">
+                <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill="url(#sniffy-grad)"
+                    d="M14 0.5l12.2 6.4c.5.3.8.8.8 1.4v8.6c0 6.4-4.7 12.4-11.2 14.8-.5.2-1.1.2-1.6 0C7.7 29.3 3 23.3 3 16.9V8.3c0-.6.3-1.1.8-1.4L14 .5z"
+                  />
+                  <path
+                    fill="#fff"
+                    d="M14 9.2l3.1 5.4L14 20l-3.1-5.4 3.1-5.4z"
+                  />
+                </svg>
+              </span>
+              <span class="picks-title">Sniffy’s Picks</span>
+            </div>
+            <div
+              class="pick"
+              tabindex="0"
+              data-brief="Billing clusters in FCC complaints are the highest signal today. Sniffy can prep a Legal-ready escalation brief in one pass."
+            >
+              <p>
+                <b>Review 3 compliance clusters: </b>flagged in billing and marketing complaints as critical.
+              </p>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </div>
+            <div
+              class="pick"
+              tabindex="0"
+              data-brief="Southwest volume is up 128 complaints this week. Sniffy suggests correlating surge dates with marketing pushes before Legal review."
+            >
+              <p>
+                <b>Investigate Southwest billing surge: </b>128 new complaints this week indicate potential fines &gt; $1M.
+              </p>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </div>
+            <div
+              class="pick"
+              tabindex="0"
+              data-brief="Two reporting deadlines land in 5 days. Sniffy can map evidence folders to your FCC audit checklist."
+            >
+              <p><b>Verify documentation for FCC audit:</b> 2 reporting deadlines due within the next 5 days.</p>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </div>
+          </section>
+
+          <section class="kpis" aria-label="Key metrics">
+            <div class="kpi glass-panel">
+              <div class="l">Obligations Met</div>
+              <div class="row">
+                <div class="v" data-kpi data-target="94" data-suffix="%">0%</div>
+                <div class="tr tr--up">+2%</div>
+              </div>
+            </div>
+            <div class="kpi glass-panel">
+              <div class="l">Case Resolution Time</div>
+              <div class="row">
+                <div class="v" data-kpi data-target="15" data-suffix="%">0%</div>
+                <div class="tr tr--up">+3</div>
+              </div>
+            </div>
+            <div class="kpi glass-panel">
+              <div class="l">Active Clusters</div>
+              <div class="row">
+                <div class="v" data-kpi data-target="23" data-suffix="">0</div>
+                <div class="tr tr--up">+3</div>
+              </div>
+            </div>
+            <div class="kpi glass-panel">
+              <div class="l">Risk Exposure</div>
+              <div class="row">
+                <div class="v" data-kpi data-target="2.1" data-prefix="$" data-suffix="M" data-decimals="1">$0M</div>
+                <div class="tr">−$340K</div>
+              </div>
+            </div>
+          </section>
+
+          <div class="grid-2">
+            <div>
+              <div class="card-h">
+                <h3 style="margin: 0; font-size: 15px; font-weight: 500; background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent">
+                  Favorite Dashboards
+                </h3>
+                <button type="button" class="crumb" style="font-size: 14px">View All</button>
+              </div>
+
+              <div class="glass-panel pad-chart" style="margin-bottom: 14px">
+                <div class="card-h">
+                  <h3>Active Clusters by Region</h3>
+                  <div class="mini">
+                    Last 7 days
+                    <svg class="mini-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="tabs" id="region-tabs" role="tablist">
+                  <button type="button" class="tab" role="tab">Southwest</button>
+                  <button type="button" class="tab tab--active" role="tab" aria-selected="true">Northwest</button>
+                  <button type="button" class="tab" role="tab">Northeast</button>
+                  <button type="button" class="tab" role="tab">Southeast</button>
+                </div>
+                <div class="chart-wrap">
+                  <!-- Normalized area chart: Apr 01–06, peak ~day 3 ($825 scale on 0–2000 axis → 825/2000 = 0.4125 from top) -->
+                  <svg class="chart-svg" viewBox="0 0 520 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#5b5fd4" stop-opacity="0.38" />
+                        <stop offset="100%" stop-color="#5b5fd4" stop-opacity="0.03" />
+                      </linearGradient>
+                    </defs>
+                    <line class="chart-grid" x1="36" y1="12" x2="500" y2="12" />
+                    <line class="chart-grid" x1="36" y1="52" x2="500" y2="52" />
+                    <line class="chart-grid" x1="36" y1="92" x2="500" y2="92" />
+                    <line class="chart-grid" x1="36" y1="132" x2="500" y2="132" />
+                    <line class="chart-grid" x1="36" y1="172" x2="500" y2="172" />
+                    <text x="30" y="16" text-anchor="end" font-size="11" font-family="Inter, sans-serif" fill="var(--muted-2)">2000</text>
+                    <text x="30" y="96" text-anchor="end" font-size="11" font-family="Inter, sans-serif" fill="var(--muted-2)">1000</text>
+                    <text x="30" y="176" text-anchor="end" font-size="11" font-family="Inter, sans-serif" fill="var(--muted-2)">0</text>
+                    <path
+                      d="M 52 155 L 128 140 L 204 88 L 280 102 L 356 125 L 432 148"
+                      fill="none"
+                      stroke="#5b5fd4"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M 52 155 L 128 140 L 204 88 L 280 102 L 356 125 L 432 148 L 432 188 L 52 188 Z"
+                      fill="url(#areaFill)"
+                    />
+                    <circle cx="204" cy="88" r="5" fill="#fff" stroke="#5b5fd4" stroke-width="2" />
+                    <g font-family="Inter, sans-serif" font-size="11">
+                      <text x="52" y="204" text-anchor="middle">01 Apr</text>
+                      <text x="128" y="204" text-anchor="middle">02 Apr</text>
+                      <text x="204" y="204" text-anchor="middle">03 Apr</text>
+                      <text x="280" y="204" text-anchor="middle">04 Apr</text>
+                      <text x="356" y="204" text-anchor="middle">05 Apr</text>
+                      <text x="432" y="204" text-anchor="middle">06 Apr</text>
+                    </g>
+                  </svg>
+                  <div class="tip">
+                    <span>03 April</span>
+                    $825
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-panel pad-chart" style="margin-bottom: 14px">
+                <div class="card-h">
+                  <h3>Risk Exposure</h3>
+                  <div class="mini">
+                    Last 7 days
+                    <svg class="mini-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="donut-wrap">
+                  <svg width="120" height="120" viewBox="0 0 120 120" aria-label="Risk distribution">
+                    <defs>
+                      <linearGradient id="d1" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#6d5ae8" />
+                        <stop offset="100%" stop-color="#4e4ce4" />
+                      </linearGradient>
+                    </defs>
+                    <!-- conic segments: 52.1, 22.8, 13.9, 11.2 -->
+                    <circle r="52" cx="60" cy="60" fill="none" stroke="url(#d1)" stroke-width="16" stroke-dasharray="170 326" transform="rotate(-90 60 60)" />
+                    <circle r="52" cx="60" cy="60" fill="none" stroke="#a78bfa" stroke-width="16" stroke-dasharray="74.5 326" stroke-dashoffset="-170" transform="rotate(-90 60 60)" />
+                    <circle r="52" cx="60" cy="60" fill="none" stroke="#5eead4" stroke-width="16" stroke-dasharray="45.4 326" stroke-dashoffset="-244.5" transform="rotate(-90 60 60)" />
+                    <circle r="52" cx="60" cy="60" fill="none" stroke="#f472b6" stroke-width="16" stroke-dasharray="36.6 326" stroke-dashoffset="-290" transform="rotate(-90 60 60)" />
+                  </svg>
+                  <div class="donut-leg">
+                    <div class="leg">
+                      <span style="display: flex; align-items: center"
+                        ><i style="background: #4e4ce4"></i>Category 1</span
+                      ><span class="muted" style="color: var(--muted)">10%</span>
+                    </div>
+                    <div class="leg">
+                      <span style="display: flex; align-items: center"
+                        ><i style="background: #a78bfa"></i>Category 1</span
+                      ><span style="color: var(--muted)">10%</span>
+                    </div>
+                    <div class="leg">
+                      <span style="display: flex; align-items: center"
+                        ><i style="background: #5eead4"></i>Category 1</span
+                      ><span style="color: var(--muted)">10%</span>
+                    </div>
+                    <div class="leg">
+                      <span style="display: flex; align-items: center"
+                        ><i style="background: #f472b6"></i>Category 1</span
+                      ><span style="color: var(--muted)">10%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-panel pad-chart">
+                <div class="card-h">
+                  <h3>Obligations Met % (Quarterly Trend)</h3>
+                  <div class="mini">
+                    Last 7 days
+                    <svg class="mini-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="tabs" id="q-tabs" role="tablist">
+                  <button type="button" class="tab" role="tab">Q1</button>
+                  <button type="button" class="tab tab--active" role="tab" aria-selected="true">Q2</button>
+                  <button type="button" class="tab" role="tab">Q3</button>
+                  <button type="button" class="tab" role="tab">Q4</button>
+                </div>
+                <svg class="chart-svg" viewBox="0 0 480 160" preserveAspectRatio="xMidYMid meet">
+                  <line class="chart-grid" x1="40" y1="20" x2="460" y2="20" />
+                  <line class="chart-grid" x1="40" y1="60" x2="460" y2="60" />
+                  <line class="chart-grid" x1="40" y1="100" x2="460" y2="100" />
+                  <text x="34" y="24" text-anchor="end" fill="var(--axis)" font-size="10" font-family="Inter, sans-serif">30K</text>
+                  <text x="34" y="104" text-anchor="end" fill="var(--axis)" font-size="10" font-family="Inter, sans-serif">0</text>
+                  <path
+                    d="M 48 78 L 110 70 L 172 52 L 234 58 L 296 48 L 358 40 L 420 44"
+                    fill="none"
+                    stroke="#334155"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M 48 92 L 110 88 L 172 82 L 234 86 L 296 80 L 358 76 L 420 72"
+                    fill="none"
+                    stroke="var(--axis)"
+                    stroke-width="1.5"
+                    stroke-dasharray="5 5"
+                  />
+                  <g font-family="Inter, sans-serif" font-size="10">
+                    <text x="48" y="122" text-anchor="middle">Jan</text>
+                    <text x="118" y="122" text-anchor="middle">Feb</text>
+                    <text x="188" y="122" text-anchor="middle">Mar</text>
+                    <text x="258" y="122" text-anchor="middle">Apr</text>
+                    <text x="328" y="122" text-anchor="middle">May</text>
+                    <text x="398" y="122" text-anchor="middle">Jun</text>
+                    <text x="432" y="122" text-anchor="middle">Jul</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <div>
+              <div class="section-label" style="display: flex; justify-content: space-between; width: 100%">
+                <span>Your Tasks</span>
+                <span style="color: var(--muted); font-weight: 400">2 Pending</span>
+              </div>
+              <div
+                class="task task--hi"
+                tabindex="0"
+                data-brief="Priority: FCC billing complaint cluster. Sniffy can draft Legal talking points from the last 30 days of similar cases."
+              >
+                <div style="display: flex; gap: 12px; align-items: center; min-width: 0">
+                  <span class="logo-sniffy" style="width: 22px; height: 26px" aria-hidden="true">
+                    <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        fill="url(#sniffy-grad)"
+                        d="M14 0.5l12.2 6.4c.5.3.8.8.8 1.4v8.6c0 6.4-4.7 12.4-11.2 14.8-.5.2-1.1.2-1.6 0C7.7 29.3 3 23.3 3 16.9V8.3c0-.6.3-1.1.8-1.4L14 .5z"
+                      />
+                      <path
+                        fill="#fff"
+                        d="M14 9.2l3.1 5.4L14 20l-3.1-5.4 3.1-5.4z"
+                      />
+                    </svg>
+                  </span>
+                  <div>
+                    <h4>Review FCC billing complaint cluster</h4>
+                    <p>Suggested by Sniffy</p>
+                  </div>
+                </div>
+                <button type="button" class="task-add" aria-label="Add or expand task">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 8v8M8 12h8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="task" tabindex="0" data-brief="Southwest escalation: attach the 128-complaint timeline before sending to regional leads.">
+                <div style="display: flex; gap: 12px; align-items: center">
+                  <span class="due-dot" aria-hidden="true"></span>
+                  <div>
+                    <h4>Prepare draft for Southwest region escalation</h4>
+                    <p>Due Today</p>
+                  </div>
+                </div>
+                <div class="av">MK</div>
+              </div>
+              <div class="task" tabindex="0" data-brief="Data Privacy audit: Sniffy can cross-check evidence folders against your last successful audit checklist.">
+                <div style="display: flex; gap: 12px; align-items: center">
+                  <span class="due-dot" aria-hidden="true"></span>
+                  <div>
+                    <h4>Verify Data Privacy audit readiness</h4>
+                    <p>Due Today</p>
+                  </div>
+                </div>
+                <div class="av">MK</div>
+              </div>
+
+              <div class="section-label" style="margin-top: 18px">Case Updates</div>
+              <div class="case">
+                <div class="case-l">
+                  <div class="ico-sq" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="case-t">Open Cases</span>
+                    <div style="font-size: 14px; color: var(--muted)">6</div>
+                  </div>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </div>
+              <div class="case">
+                <div class="case-l">
+                  <div class="ico-sq" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <path d="M15 2H9a1 1 0 0 0-1 1v2h8V3a1 1 0 0 0-1-1z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="case-t">Due Audits</span>
+                    <div style="font-size: 14px; color: var(--muted)">3</div>
+                  </div>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </div>
+              <div class="case">
+                <div class="case-l">
+                  <div class="ico-sq" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <path d="M16 2v4M8 2v4M3 10h18" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="case-t">Deadlines</span>
+                    <div style="font-size: 14px; color: var(--muted)">12</div>
+                  </div>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="col-right" id="sniffy-rail-panel" aria-label="Ask Sniffy">
+        <div class="rail-h">
+          <div class="rail-h-main">
+            <span class="rail-title">Ask Sniffy</span>
+          </div>
+          <button type="button" class="rail-collapse" id="rail-collapse" aria-label="Collapse chat panel" title="Collapse chat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="rail-scroll">
+          <div class="brief" id="sniffy-brief">
+            <div class="brief-head">
+              <span class="logo-sniffy" style="width: 20px; height: 24px" aria-hidden="true">
+                <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill="url(#sniffy-grad)"
+                    d="M14 0.5l12.2 6.4c.5.3.8.8.8 1.4v8.6c0 6.4-4.7 12.4-11.2 14.8-.5.2-1.1.2-1.6 0C7.7 29.3 3 23.3 3 16.9V8.3c0-.6.3-1.1.8-1.4L14 .5z"
+                  />
+                  <path fill="#fff" d="M14 9.2l3.1 5.4L14 20l-3.1-5.4 3.1-5.4z" />
+                </svg>
+              </span>
+              Sniffy’s Brief
+            </div>
+            <p id="brief-text">
+              Immediate focus: escalate Southwest complaints to Legal &amp; PR. Review FCC billing clusters from the past month. Prepare for 3 upcoming audits.
+            </p>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: var(--muted); margin-bottom: 8px">Quick Actions</div>
+            <div class="chips">
+              <button type="button" class="chip">Escalation path for Southwest cluster?</button>
+              <button type="button" class="chip">List FCC billing clusters (last 30 days).</button>
+              <button type="button" class="chip">Summarize audits &amp; deadlines</button>
+            </div>
+          </div>
+        </div>
+        <div class="rail-foot">
+          <div class="chat">
+            <input class="chat-input" type="text" placeholder="Ask me anything..." aria-label="Ask Sniffy" />
+            <button type="button" aria-label="Voice input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
+              </svg>
+            </button>
+            <button type="button" aria-label="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      (function () {
+        var THEME_KEY = "sniffy-theme";
+        var root = document.documentElement;
+        var themeToggle = document.getElementById("theme-toggle");
+        var star = document.getElementById("btn-star");
+        var railToggle = document.getElementById("rail-toggle");
+        var railCollapse = document.getElementById("rail-collapse");
+        var appRoot = document.getElementById("app-root");
+        var settingsTrigger = document.getElementById("settings-trigger");
+        var settingsPanel = document.getElementById("left-settings-panel");
+        var RAIL_KEY = "sniffy-rail-collapsed";
+
+        function setTheme(mode) {
+          var dark = mode === "dark";
+          if (dark) {
+            root.setAttribute("data-theme", "dark");
+          } else {
+            root.setAttribute("data-theme", "light");
+          }
+          if (themeToggle) {
+            themeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+            themeToggle.textContent = dark ? "Light" : "Dark";
+          }
+          try {
+            localStorage.setItem(THEME_KEY, mode);
+          } catch (e) {}
+        }
+        var initial = null;
+        try {
+          initial = localStorage.getItem(THEME_KEY);
+        } catch (e) {}
+        if (initial === "dark" || initial === "light") setTheme(initial);
+        else setTheme("light");
+
+        function setRailCollapsed(collapsed) {
+          if (!appRoot) return;
+          if (collapsed) appRoot.classList.add("is-rail-collapsed");
+          else appRoot.classList.remove("is-rail-collapsed");
+          if (railToggle) railToggle.setAttribute("aria-pressed", collapsed ? "true" : "false");
+          try {
+            localStorage.setItem(RAIL_KEY, collapsed ? "1" : "0");
+          } catch (e) {}
+        }
+
+        var railStored = null;
+        try {
+          railStored = localStorage.getItem(RAIL_KEY);
+        } catch (e) {}
+        var shouldCollapseRail = railStored === null ? true : railStored === "1";
+        setRailCollapsed(shouldCollapseRail);
+
+        if (themeToggle) {
+          themeToggle.addEventListener("click", function () {
+            var isDark = root.getAttribute("data-theme") === "dark";
+            setTheme(isDark ? "light" : "dark");
+          });
+        }
+        if (railToggle) {
+          railToggle.addEventListener("click", function () {
+            var collapsed = appRoot.classList.contains("is-rail-collapsed");
+            setRailCollapsed(!collapsed);
+          });
+        }
+        if (railCollapse) {
+          railCollapse.addEventListener("click", function () {
+            setRailCollapsed(true);
+          });
+        }
+
+        if (settingsTrigger && settingsPanel) {
+          settingsTrigger.addEventListener("click", function () {
+            var open = settingsPanel.hasAttribute("hidden");
+            if (open) {
+              settingsPanel.removeAttribute("hidden");
+              settingsTrigger.classList.add("util-item--active");
+              settingsTrigger.setAttribute("aria-expanded", "true");
+            } else {
+              settingsPanel.setAttribute("hidden", "");
+              settingsTrigger.classList.remove("util-item--active");
+              settingsTrigger.setAttribute("aria-expanded", "false");
+            }
+          });
+          document.addEventListener("click", function (e) {
+            if (settingsPanel.hasAttribute("hidden")) return;
+            if (settingsPanel.contains(e.target) || settingsTrigger.contains(e.target)) return;
+            settingsPanel.setAttribute("hidden", "");
+            settingsTrigger.classList.remove("util-item--active");
+            settingsTrigger.setAttribute("aria-expanded", "false");
+          });
+        }
+
+        star.addEventListener("click", function () {
+          var on = star.getAttribute("aria-pressed") === "true";
+          star.setAttribute("aria-pressed", on ? "false" : "true");
+        });
+
+        function easeOutCubic(t) {
+          return 1 - Math.pow(1 - t, 3);
+        }
+        function animateKpi(el) {
+          var target = parseFloat(el.getAttribute("data-target"));
+          var prefix = el.getAttribute("data-prefix") || "";
+          var suffix = el.getAttribute("data-suffix") || "";
+          var dec = parseInt(el.getAttribute("data-decimals") || "0", 10);
+          var dur = 1100;
+          var t0 = performance.now();
+          function frame(now) {
+            var t = Math.min(1, (now - t0) / dur);
+            var e = easeOutCubic(t);
+            var v = target * e;
+            var txt =
+              dec > 0 ? prefix + v.toFixed(dec) + suffix : prefix + Math.round(v) + suffix;
+            el.textContent = txt;
+            if (t < 1) requestAnimationFrame(frame);
+            else {
+              el.textContent =
+                dec > 0 ? prefix + target.toFixed(dec) + suffix : prefix + Math.round(target) + suffix;
+            }
+          }
+          requestAnimationFrame(frame);
+        }
+        document.querySelectorAll("[data-kpi]").forEach(function (el) {
+          animateKpi(el);
+        });
+
+        function bindTabs(container) {
+          if (!container) return;
+          var tabs = container.querySelectorAll(".tab");
+          tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+              tabs.forEach(function (t) {
+                t.classList.remove("tab--active");
+                t.setAttribute("aria-selected", "false");
+              });
+              tab.classList.add("tab--active");
+              tab.setAttribute("aria-selected", "true");
+            });
+          });
+        }
+        bindTabs(document.getElementById("region-tabs"));
+        bindTabs(document.getElementById("q-tabs"));
+
+        var nav = document.getElementById("sb-nav");
+        function activateNav(btn) {
+          document.querySelectorAll(".nav-item").forEach(function (n) {
+            n.classList.remove("nav-item--active");
+          });
+          btn.classList.add("nav-item--active");
+        }
+        nav.querySelectorAll(".nav-item").forEach(function (b) {
+          b.addEventListener("click", function () {
+            activateNav(b);
+          });
+        });
+
+        var briefText = document.getElementById("brief-text");
+        var briefCard = document.getElementById("sniffy-brief");
+        var defaultBrief = briefText.textContent.trim();
+        var scope = document.getElementById("sniffy-scope");
+        function flashBrief() {
+          briefCard.classList.remove("brief--flash");
+          void briefCard.offsetWidth;
+          briefCard.classList.add("brief--flash");
+          setTimeout(function () {
+            briefCard.classList.remove("brief--flash");
+          }, 600);
+        }
+        function setBrief(text) {
+          briefText.textContent = text;
+          flashBrief();
+        }
+        document.querySelectorAll(".pick[data-brief]").forEach(function (row) {
+          row.addEventListener("mouseenter", function () {
+            setBrief(row.getAttribute("data-brief"));
+          });
+          row.addEventListener("focus", function () {
+            setBrief(row.getAttribute("data-brief"));
+          });
+        });
+        document.querySelectorAll(".task[data-brief]").forEach(function (card) {
+          card.addEventListener("mouseenter", function () {
+            setBrief(card.getAttribute("data-brief"));
+          });
+          card.addEventListener("focus", function () {
+            setBrief(card.getAttribute("data-brief"));
+          });
+        });
+        if (scope) {
+          scope.addEventListener("mouseleave", function () {
+            briefText.textContent = defaultBrief;
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
